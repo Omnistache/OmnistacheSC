@@ -25,7 +25,6 @@ public class OmnistacheSC extends JavaPlugin {
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	
 	private int eventControllerTaskId = -1;
-	private int entityRemoverTaskId = -1;
 
 	public OmnistacheSC(PluginLoader pluginLoader, Server instance, 
 			PluginDescriptionFile desc, File folder, File plugin, 
