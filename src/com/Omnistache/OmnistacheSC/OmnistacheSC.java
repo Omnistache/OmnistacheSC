@@ -22,7 +22,7 @@ import com.Omnistache.OmnistacheSC.Event.EventController;
  */ 
 public class OmnistacheSC extends JavaPlugin {
 	
-	private static final long EVENT_CYCLE = 100;
+	public static final long EVENT_CYCLE = 100;
 	private final OmnistacheSCEntityListener entityListener = new OmnistacheSCEntityListener(this); 
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	
@@ -64,7 +64,10 @@ public class OmnistacheSC extends JavaPlugin {
 	}
 
 	public void restartEventController(){
-		
+		if(eventController != null){
+			eventController.disable();
+		}
+		eventController = new EventController(getServer(), this);
 	}
 
 	public void setDebugging(final Player player, final boolean value) { 

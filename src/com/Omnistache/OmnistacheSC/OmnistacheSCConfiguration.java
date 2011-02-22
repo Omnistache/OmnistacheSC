@@ -27,55 +27,50 @@ public class OmnistacheSCConfiguration {
 	public void initialize(OmnistacheSC omnistacheSC){
 		this.omnistacheSC = omnistacheSC;
 		
+		//Check/create the defaultworldconfig
+		
+		File defaultConfig = new File(omnistacheSC.getDataFolder(), "defaultworldconfig.yml");
+		
+		if(!defaultConfig.exists()){ //if there's no custom default configuration then make it
+			defaultConfig.getParentFile().mkdirs();
+			
+			FileInputStream in = (FileInputStream) getClass().getResourceAsStream("/defaultworldconfig.yml");
+			FileOutputStream out;
+			try {
+				out = new FileOutputStream(defaultConfig);
+				out.getChannel().transferFrom(
+						in.getChannel(), 0, in.getChannel().size());
+
+				in.close();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		//Load World configurations
 		for(World world : omnistacheSC.getServer().getWorlds()){
 
 			File configFile = new File(omnistacheSC.getDataFolder(), world.getName()+"_config.yml");
 
 			if(!configFile.exists()){
-				configFile.getParentFile().mkdirs();
-				
-				File defaultConfig = new File(omnistacheSC.getDataFolder(), "defaultworldconfig.yml");
-				if(!defaultConfig.exists()){ //if there's no custom default configuration then make it
-					FileInputStream in = (FileInputStream) getClass().getResourceAsStream("/defaultworldconfig.yml");
-					FileOutputStream out;
-					try {
-						out = new FileOutputStream(defaultConfig);
-						out.getChannel().transferFrom(
-								in.getChannel(), 0, in.getChannel().size());
-
-						in.close();
-						out.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				//then copy from the defaultconfig.yml to the new world's config
-				
-				FileInputStream in;
-				FileOutputStream out;
-				try {
-					in = new FileInputStream(defaultConfig);
-					out = new FileOutputStream(configFile);
-					out.getChannel().transferFrom(
-							in.getChannel(), 0, in.getChannel().size());
-
-					in.close();
-					out.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				worldConfig.put(world, null);
 			}
-			worldConfig.put(world, new Configuration(configFile));
+			else {
+				worldConfig.put(world, new Configuration(configFile));
+			}
 		}
-		for(Configuration configuration: worldConfig.values())
-			configuration.load();
+		
+		for(Configuration configuration : worldConfig.values()){
+			if(configuration != null)
+				configuration.load();
+		}
 
 		//Load phases
 
 		File phasesFile = new File(omnistacheSC.getDataFolder(), "phases.yml");
 
+		//copy over the default phases file if no phases file exists!
 		if(!phasesFile.exists()){
 			phasesFile.getParentFile().mkdirs();
 
@@ -100,8 +95,8 @@ public class OmnistacheSCConfiguration {
 		initialize(omnistacheSC);
 	}
 	
-	public boolean useSpawnControl(World world){
-		return worldConfig.get(world).getBoolean("UseSpawnControl", true);
+	public boolean hasConfig(World world){
+		return worldConfig.get(world) != null;
 	}
 
 	public ArrayList<Event> getEvents(World world){
@@ -111,11 +106,7 @@ public class OmnistacheSCConfiguration {
 	public ArrayList<Phase> getPhases(){
 		return phases;
 	}
-
-	public long getEventCycle(World world) {
-		return worldConfig.get(world).getInt("EventCycle", 100);
-	}
-
+	
 	public boolean getSkeletonSunburn(World world) {
 		return worldConfig.get(world).getBoolean("SkeletonSunburn", false);
 	}

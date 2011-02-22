@@ -56,8 +56,8 @@ public enum MobSet {
 	
 	private ArrayList<Class<? extends LivingEntity>> classList = new ArrayList<Class<? extends LivingEntity>>();
 	
-	private MobSet(Class<? extends LivingEntity>... classArray){
-		classList.addAll(Arrays.asList(classArray));
+	private MobSet(Class<? extends LivingEntity>... classes){
+		classList.addAll(Arrays.asList(classes));
 	}
 
 	public boolean match(LivingEntity livingEntity){
