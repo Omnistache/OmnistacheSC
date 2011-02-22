@@ -1,4 +1,4 @@
-package com.Omnistache.OmnistacheSC;
+package com.Omnistache.OmnistacheSC.Spawn.Group;
 
 import java.util.ArrayList;
 import java.util.Random;

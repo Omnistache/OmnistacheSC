@@ -1,4 +1,4 @@
-package com.Omnistache.OmnistacheSC;
+package com.Omnistache.OmnistacheSC.Spawn.Control;
 
 import org.bukkit.Server;
 
@@ -7,12 +7,9 @@ import org.bukkit.Server;
  * There is one of these for each world inside EventController
  * that uses SpawnControl
  */
-public class OmnistacheSCEntityController implements Runnable {
-	
-	private OmnistacheSCSpawnInfo spawnInfo = null;
-	
-	
-	public OmnistacheSCEntityController(Server server) {
+public class EntityController implements Runnable {
+
+	public EntityController(Server server) {
 		
 	}
 

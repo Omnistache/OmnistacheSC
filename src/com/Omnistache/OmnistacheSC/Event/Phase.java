@@ -1,11 +1,11 @@
-package com.Omnistache.OmnistacheSC;
+package com.Omnistache.OmnistacheSC.Event;
 
 import java.util.ArrayList;
 
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 
-public class OmnistacheSCPhase {
+public class Phase {
 
 	private String name = null;
 	

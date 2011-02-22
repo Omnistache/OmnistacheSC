@@ -1,4 +1,4 @@
-package com.Omnistache.OmnistacheSC;
+package com.Omnistache.OmnistacheSC.Spawn.Control;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +18,7 @@ import org.bukkit.entity.Spider;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.Zombie;
 
-public enum OmnistacheSCMobSet {
+public enum MobSet {
 
 	All(Chicken.class, Cow.class, Pig.class,
 	     Sheep.class, Creeper.class, Ghast.class,
@@ -26,8 +26,7 @@ public enum OmnistacheSCMobSet {
 	     Spider.class, Zombie.class, Squid.class,
 	     Slime.class),
 	None(),
-	Animals(Chicken.class, Cow.class, Pig.class,
-	     Sheep.class),
+	Animals(Chicken.class, Cow.class, Pig.class, Sheep.class),
 	Monsters(Creeper.class, Ghast.class,
 		     Giant.class, PigZombie.class, Skeleton.class,
 		     Spider.class, Zombie.class),
@@ -57,7 +56,7 @@ public enum OmnistacheSCMobSet {
 	
 	private ArrayList<Class<? extends LivingEntity>> classList = new ArrayList<Class<? extends LivingEntity>>();
 	
-	private OmnistacheSCMobSet(Class<? extends LivingEntity>... classArray){
+	private MobSet(Class<? extends LivingEntity>... classArray){
 		classList.addAll(Arrays.asList(classArray));
 	}
 

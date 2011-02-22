@@ -10,14 +10,17 @@ import java.util.HashMap;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
 
+import com.Omnistache.OmnistacheSC.Event.Event;
+import com.Omnistache.OmnistacheSC.Event.Phase;
+
 public class OmnistacheSCConfiguration {
 
 	public final static OmnistacheSCConfiguration INSTANCE = new OmnistacheSCConfiguration();
 	private HashMap<World, Configuration> worldConfig = new HashMap<World, Configuration>();
 	private Configuration phasesConfig;
 	private OmnistacheSC omnistacheSC;
-	private ArrayList<OmnistacheSCPhase> phases = new ArrayList<OmnistacheSCPhase>();
-	private HashMap<World, ArrayList<OmnistacheSCEvent>> events = new HashMap<World,ArrayList<OmnistacheSCEvent>>();
+	private ArrayList<Phase> phases = new ArrayList<Phase>();
+	private HashMap<World, ArrayList<Event>> events = new HashMap<World,ArrayList<Event>>();
 	
 	private OmnistacheSCConfiguration(){} //singleton
 	
@@ -101,11 +104,11 @@ public class OmnistacheSCConfiguration {
 		return worldConfig.get(world).getBoolean("UseSpawnControl", true);
 	}
 
-	public ArrayList<OmnistacheSCEvent> getEvents(World world){
+	public ArrayList<Event> getEvents(World world){
 		return events.get(world);
 	}
 	
-	public ArrayList<OmnistacheSCPhase> getPhases(){
+	public ArrayList<Phase> getPhases(){
 		return phases;
 	}
 

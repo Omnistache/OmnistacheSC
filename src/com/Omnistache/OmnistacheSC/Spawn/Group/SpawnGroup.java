@@ -1,24 +1,26 @@
-package com.Omnistache.OmnistacheSC;
+package com.Omnistache.OmnistacheSC.Spawn.Group;
 
 import java.util.ArrayList;
 
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 
+import com.Omnistache.OmnistacheSC.Spawn.Control.EntityController;
+import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
 
 /*
  * Contains information regarding a group of spawned entities
  * Holds pointers to the actual living entities in the game world
  * Also contains AI information
  */
-public class OmnistacheSCSpawnGroup {
+public class SpawnGroup {
 
 	private ArrayList<LivingEntity> livingEntities = new ArrayList<LivingEntity>();
 	private World world;
-	private OmnistacheSCSpawnStyle spawnStyle;
+	private SpawnStyle spawnStyle;
 
 	
-	public OmnistacheSCSpawnGroup(World world, OmnistacheSCSpawnStyle spawnStyle){
+	public SpawnGroup(World world, SpawnStyle spawnStyle){
 		this.world = world;
 		this.spawnStyle = spawnStyle;
 	}	
@@ -37,7 +39,7 @@ public class OmnistacheSCSpawnGroup {
 	 * if there are not, it sends a notification to the controller
 	 * to remove itself
 	 */
-	public void tickAI(OmnistacheSCEntityController controller){
+	public void tickAI(EntityController controller){
 		
 	}
 	

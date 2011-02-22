@@ -13,6 +13,8 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager; 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.Omnistache.OmnistacheSC.Event.EventController;
+
 /** 
  * OmnistacheZA for Bukkit 
  * 
@@ -24,7 +26,7 @@ public class OmnistacheSC extends JavaPlugin {
 	private final OmnistacheSCEntityListener entityListener = new OmnistacheSCEntityListener(this); 
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	
-	private int eventControllerTaskId = -1;
+	private EventController eventController = null;
 
 	public OmnistacheSC(PluginLoader pluginLoader, Server instance, 
 			PluginDescriptionFile desc, File folder, File plugin, 
@@ -43,14 +45,14 @@ public class OmnistacheSC extends JavaPlugin {
 		pm.registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
 		
 		//start up the event controller
-		restartEventControllerTask();
+		restartEventController();
 		
 		PluginDescriptionFile description = this.getDescription();
 		Logger.getLogger("Minecraft").info(description.getName() + ", version: " + description.getVersion() + " is enabled!"); 
 	}
 	
 	public void onDisable() { 
-		getServer().getScheduler().cancelTask(eventControllerTaskId);
+
 	} 
 	
 	public boolean isDebugging(final Player player) { 
@@ -60,19 +62,9 @@ public class OmnistacheSC extends JavaPlugin {
 			return false; 
 		} 
 	}
-	
-	public void cancelEventControllerTask(){
-		if(eventControllerTaskId != -1)
-			getServer().getScheduler().cancelTask(eventControllerTaskId);
-		eventControllerTaskId = -1;
-	}
 
-	public void restartEventControllerTask(){
+	public void restartEventController(){
 		
-		cancelEventControllerTask();
-		
-		eventControllerTaskId = getServer().getScheduler().scheduleAsyncRepeatingTask(
-				this, new OmnistacheSCEventController(getServer()), 100, EVENT_CYCLE);	
 	}
 
 	public void setDebugging(final Player player, final boolean value) { 

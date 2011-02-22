@@ -1,19 +1,20 @@
-package com.Omnistache.OmnistacheSC;
+package com.Omnistache.OmnistacheSC.Event;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.World;
 
-public class OmnistacheSCEvent {
+
+public class Event {
 
 	private String name = null;
-	private ArrayList<OmnistacheSCPhase> phases = new ArrayList<OmnistacheSCPhase>();
+	private ArrayList<Phase> phases = new ArrayList<Phase>();
 	private int[] begins = null;
 	private int probability = 100;
 	private int minimumPlayersOnline = 1;
 	private ArrayList<String> occursInWorlds = null;
-	private OmnistacheSCPhase currentPhase = null;
+	private Phase currentPhase = null;
 	private World world = null;
 	
 	public boolean isAllowedInWorld(World world){
