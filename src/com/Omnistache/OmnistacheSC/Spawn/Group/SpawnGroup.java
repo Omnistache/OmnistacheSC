@@ -1,6 +1,7 @@
 package com.Omnistache.OmnistacheSC.Spawn.Group;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -15,8 +16,9 @@ import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
  */
 public class SpawnGroup {
 
-	private ArrayList<LivingEntity> livingEntities = new ArrayList<LivingEntity>();
+	private HashSet<LivingEntity> livingEntities = new HashSet<LivingEntity>();
 	private World world;
+	private int groupSize;
 	private SpawnStyle spawnStyle;
 	
 	public SpawnGroup(World world, SpawnStyle spawnStyle){
@@ -29,7 +31,7 @@ public class SpawnGroup {
 	}
 	
 	/*
-	 * turns off the internal reinforce timer
+	 * turns off the internal reinforce timer WITH A VENGEANCE
 	 */
 	public void deactivateGroup(){
 		

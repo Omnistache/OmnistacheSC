@@ -18,6 +18,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+/*
+ * original spagetti code class that
+ * spawned zombies and ran their ai
+ * kept to copy paste the ai and stuff
+ */
+
 public class OmnistacheSCSpawnTimer implements Runnable {
 
 	private static final int MAX_ZOMBIES = 150;
