@@ -6,6 +6,11 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityListener;
 
+/*
+ * EntityListener currently exists only to prevent zombies and skeletons
+ * from catching fire in the sun when configured as such
+ */
+
 public class OmnistacheSCEntityListener extends EntityListener {
 
 	public OmnistacheSCEntityListener(OmnistacheSC omnistacheZA){

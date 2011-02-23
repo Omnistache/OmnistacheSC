@@ -48,7 +48,7 @@ public class OmnistacheSC extends JavaPlugin {
 		restartEventController();
 		
 		PluginDescriptionFile description = this.getDescription();
-		Logger.getLogger("Minecraft").info(description.getName() + ", version: " + description.getVersion() + " is enabled!"); 
+		getServer().getLogger().info(description.getName() + ", version: " + description.getVersion() + " is enabled!"); 
 	}
 	
 	public void onDisable() { 

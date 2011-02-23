@@ -18,26 +18,25 @@ public class SpawnGroup {
 	private ArrayList<LivingEntity> livingEntities = new ArrayList<LivingEntity>();
 	private World world;
 	private SpawnStyle spawnStyle;
-
 	
 	public SpawnGroup(World world, SpawnStyle spawnStyle){
 		this.world = world;
 		this.spawnStyle = spawnStyle;
 	}	
 		
-	public void reinforce() {
+	private void reinforce() {
 		
 	}
-
+	
+	/*
+	 * turns off the internal reinforce timer
+	 */
 	public void deactivateGroup(){
 		
 	}
 	
 	/*
 	 * tick method for EntityController to tick the AI
-	 * this checks to see if there are any mobs still alive
-	 * if there are not, it sends a notification to the controller
-	 * to remove itself
 	 */
 	public void tickAI(EntityController controller){
 		

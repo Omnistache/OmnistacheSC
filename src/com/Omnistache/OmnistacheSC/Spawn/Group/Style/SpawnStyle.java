@@ -1,10 +1,14 @@
 package com.Omnistache.OmnistacheSC.Spawn.Group.Style;
 
-import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
 
 public interface SpawnStyle {
 
-	public Location getSpawnLocation(World world);
+	/*
+	 * Tries to spawn an entity,
+	 * if not successful, returns null
+	 */
+	public LivingEntity spawnEntity(World world);
 	
 }

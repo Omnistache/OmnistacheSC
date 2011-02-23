@@ -1,7 +1,6 @@
 package com.Omnistache.OmnistacheSC.Spawn.Control;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
@@ -18,23 +17,45 @@ import org.bukkit.entity.Spider;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.Zombie;
 
+/*
+ * MobSet is used by the EntityController thread
+ * to check whether an entity is allowed in the world/should be removed
+ */
+
 public enum MobSet {
 
-	All(Chicken.class, Cow.class, Pig.class,
-	     Sheep.class, Creeper.class, Ghast.class,
-	     Giant.class, PigZombie.class, Skeleton.class,
-	     Spider.class, Zombie.class, Squid.class,
-	     Slime.class),
+	/*
+	 * I have defeated java warnings with inline initialization of arraylists with
+	 * anonymous classes!!!!!!!!!
+	*/
+	
+	All(new ArrayList<Class<? extends LivingEntity>>() {
+		private static final long serialVersionUID = 1L;
+	{
+		add(Chicken.class); add(Cow.class); add(Pig.class); add(Sheep.class);
+		add(Creeper.class); add(Ghast.class); add(Giant.class); add(PigZombie.class);
+		add(Skeleton.class); add(Spider.class); add(Zombie.class); add(Squid.class);
+		add(Slime.class);
+	}}),
 	None(),
-	Animals(Chicken.class, Cow.class, Pig.class, Sheep.class),
-	Monsters(Creeper.class, Ghast.class,
-		     Giant.class, PigZombie.class, Skeleton.class,
-		     Spider.class, Zombie.class),
-	LandDwelling(Chicken.class, Cow.class, Pig.class,
-		     Sheep.class, Creeper.class,
-		     Giant.class, PigZombie.class, Skeleton.class,
-		     Spider.class, Zombie.class,
-		     Slime.class),
+	Animals(new ArrayList<Class<? extends LivingEntity>>() {
+		private static final long serialVersionUID = 1L;
+	{
+		add(Chicken.class); add(Cow.class); add(Pig.class); add(Sheep.class);
+	}}),
+	Monsters(new ArrayList<Class<? extends LivingEntity>>() {
+		private static final long serialVersionUID = 1L;
+	{
+		add(Creeper.class); add(Ghast.class); add(Giant.class); add(PigZombie.class);
+		add(Skeleton.class); add(Spider.class); add(Zombie.class);
+	}}),
+	LandDwelling(new ArrayList<Class<? extends LivingEntity>>() {
+		private static final long serialVersionUID = 1L;
+	{
+		add(Chicken.class); add(Cow.class); add(Pig.class);	add(Sheep.class);
+		add(Creeper.class);	add(Giant.class); add(PigZombie.class); add(Skeleton.class);
+		add(Spider.class); add(Zombie.class); add(Slime.class);
+	}}),
 	SeaDwelling(Squid.class),
 	Flying(Ghast.class),
 	
@@ -55,9 +76,15 @@ public enum MobSet {
 	Slimes(Slime.class);
 	
 	private ArrayList<Class<? extends LivingEntity>> classList = new ArrayList<Class<? extends LivingEntity>>();
-	
-	private MobSet(Class<? extends LivingEntity>... classes){
-		classList.addAll(Arrays.asList(classes));
+
+	private MobSet(){}
+
+	private MobSet(Class<? extends LivingEntity> class1){
+		classList.add(class1);
+	}
+
+	private MobSet(ArrayList<Class<? extends LivingEntity>> classArray){
+		classList.addAll(classArray);
 	}
 
 	public boolean match(LivingEntity livingEntity){
