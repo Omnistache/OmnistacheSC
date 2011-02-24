@@ -65,7 +65,7 @@ public class OmnistacheSCSpawnTimer implements Runnable {
 		ArrayList<EntityZombie> removes = new ArrayList<EntityZombie>();
 		
 		for(EntityZombie zombie : zombies){
-			if(!zombie.B()){
+			if(!zombie.dead){
 				removes.add(zombie);
 				continue;
 			}
