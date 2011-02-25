@@ -11,4 +11,10 @@ public interface SpawnStyle {
 	 */
 	public LivingEntity spawnEntity(World world);
 	
+	/*
+	 * This is the string your AI matches to
+	 * in a config file i.e. NEAREST_PLAYER_SURFACE
+	 */
+	public String typeString();
+	
 }

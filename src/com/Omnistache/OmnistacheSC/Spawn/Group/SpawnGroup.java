@@ -16,7 +16,7 @@ import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
  */
 public class SpawnGroup {
 
-	private HashSet<LivingEntity> livingEntities = new HashSet<LivingEntity>();
+	private HashSet<LivingEntity> livingEntities = null;
 	private World world;
 	private int groupSize;
 	private SpawnStyle spawnStyle;
@@ -40,7 +40,7 @@ public class SpawnGroup {
 	/*
 	 * tick method for EntityController to tick the AI
 	 */
-	public void tickAI(EntityController controller){
+	public void tickAI(){
 		
 	}
 	

@@ -1,15 +1,15 @@
 package com.Omnistache.OmnistacheSC.Spawn.Control;
 
-import org.bukkit.Server;
+import org.bukkit.World;
 
 /*
  * EntityController, lives inside EventController
  * There is one of these for each world inside EventController
- * that uses SpawnControl
+ * that has a configuration file
  */
 public class EntityController implements Runnable {
 
-	public EntityController(Server server) {
+	public EntityController(World world) {
 		
 	}
 

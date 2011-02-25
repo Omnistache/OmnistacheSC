@@ -17,26 +17,6 @@ public class Event {
 	private Phase currentPhase = null;
 	private World world = null;
 	
-	public boolean isAllowedInWorld(World world){
-		if(occursInWorlds == null)
-			return true;
-		
-		if(occursInWorlds.isEmpty())
-			return true;
-		
-		if(occursInWorlds.contains("All"))
-			return true;
-		
-		if(occursInWorlds.contains(world.getName()))
-			return true;
-		
-		//test for general terms like NETHER or NORMAL
-		if(occursInWorlds.contains(world.getEnvironment().toString()))
-			return true;
-		
-		return false;
-	}
-	
 	public boolean testProbability(){
 		
 		//Shazzam.
