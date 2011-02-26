@@ -14,24 +14,30 @@ import com.Omnistache.OmnistacheSC.OmnistacheSC;
 public class EventController implements Runnable {
 
 	private Server server;
-	private int taskId = -1;
+	private int eventControllerTaskId = -1;
 
 	public EventController(Server server, OmnistacheSC plugin) {
 		this.server = server;
 		//it schedules itself
-		taskId = server.getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, OmnistacheSC.EVENT_CYCLE);
+		eventControllerTaskId = server.getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, OmnistacheSC.EVENT_CYCLE);
 	}
 	
 	public void disable(){
-		server.getScheduler().cancelTask(taskId);
+		server.getScheduler().cancelTask(eventControllerTaskId);
 		server = null;
-		taskId = -1;
+		eventControllerTaskId = -1;
 		//TODO: cancel all other tasks associated FFFUUUUUU clean up loose ends avoid memory LEEEEAKS!!!!
 	}
 
 	@Override
 	public void run() {
+		//make sure entitycontrollers are running
 		
+		//make sure they have the correct static spawn groups
+		
+		//attempt to start events in each world
+		
+		//
 	}
 
 }
