@@ -1,22 +1,22 @@
 ﻿package com.Omnistache.OmnistacheSC; 
 
-import java.io.*; 
-import java.util.HashMap; 
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 
-import org.bukkit.Server; 
-import org.bukkit.entity.Player; 
-import org.bukkit.event.Event; 
-import org.bukkit.event.Event.Priority; 
-import org.bukkit.plugin.PluginDescriptionFile; 
-import org.bukkit.plugin.PluginLoader; 
-import org.bukkit.plugin.PluginManager; 
+import org.bukkit.Server;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.Event.Priority;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginLoader;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.Omnistache.OmnistacheSC.Event.EventController;
 
 /** 
- * OmnistacheZA for Bukkit 
+ * OmnistacheSC for Bukkit 
  * 
  * @author Brozack_Nicholas.Brozack 
  */ 
@@ -31,7 +31,7 @@ public class OmnistacheSC extends JavaPlugin {
 	public OmnistacheSC(PluginLoader pluginLoader, Server instance, 
 			PluginDescriptionFile desc, File folder, File plugin, 
 			ClassLoader cLoader) throws IOException { 
-		super(pluginLoader, instance, desc, folder, plugin, cLoader); 
+		super(); 
 
 		//Load the configuration files
 		OmnistacheSCConfiguration.INSTANCE.initialize(this);
