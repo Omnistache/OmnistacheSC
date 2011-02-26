@@ -15,6 +15,7 @@ import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
  * Contains information regarding a group of spawned entities
  * Holds pointers to the actual living entities in the game world
  * Also contains AI information
+ * while active, an internal schedule reinforces the group with new mobs
  */
 public class SpawnGroup implements Runnable {
 
@@ -44,6 +45,10 @@ public class SpawnGroup implements Runnable {
 		this.spawnModifier = spawnModifier;
 	}
 	
+	/*
+	 * removes entities with 0 health
+	 * run by two threads when group is active 
+	 */
 	private void removeDeadEntities(){
 		
 		ArrayList<LivingEntity> remove = new ArrayList<LivingEntity>();
@@ -58,7 +63,11 @@ public class SpawnGroup implements Runnable {
 		}
 		
 	}
-		
+
+	/*
+	 * attempts to spawn reinforceAmount of mobs up to the
+	 * groupSize
+	 */
 	private void reinforce() {
 		removeDeadEntities();
 		int openSpots = groupSize - livingEntities.size();
@@ -77,6 +86,15 @@ public class SpawnGroup implements Runnable {
 				spawnModifier.applyToEntity(entity);
 			}
 		}
+	}
+	
+	/*
+	 * checks to see if the reinforce schedule is active
+	 * which would mean that the group is actively
+	 * spawning its mobs
+	 */
+	public boolean isActive(){
+		return (reinforceTaskId != -1);
 	}
 	
 	/*

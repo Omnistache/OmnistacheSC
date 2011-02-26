@@ -23,7 +23,6 @@ import com.Omnistache.OmnistacheSC.Event.EventController;
 public class OmnistacheSC extends JavaPlugin {
 	
 	public static final long EVENT_CYCLE = 100;
-	private final OmnistacheSCEntityListener entityListener = new OmnistacheSCEntityListener(this); 
 	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	
 	private EventController eventController = null;
@@ -38,12 +37,7 @@ public class OmnistacheSC extends JavaPlugin {
 	} 
 
 	public void onEnable() { 
-		// Register our events 
-		PluginManager pm = getServer().getPluginManager(); 
-		
-		//For the prevention of zombies/skeletons bursting into flame as configured in the configuration file
-		pm.registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
-		
+
 		//start up the event controller
 		restartEventController();
 		

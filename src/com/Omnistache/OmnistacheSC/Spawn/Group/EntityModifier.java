@@ -12,6 +12,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.plugin.Plugin;
 
+/*
+ * Held inside a SpawnGroup, used to modify entities that were just spawned
+ */
 public class EntityModifier extends EntityListener {
 
 	private int startingHealth;
@@ -34,10 +37,16 @@ public class EntityModifier extends EntityListener {
 		}
 	}
 	
+	/*
+	 * checks to see if this modifies the damage of the group of entities
+	 */
 	private boolean modifiesDamage() {
 		return (damage != -1);
 	}
 	
+	/*
+	 * removes dead entities from the modifiedentities list
+	 */
 	private void removeDeadEntities(){
 		ArrayList<LivingEntity> remove = new ArrayList<LivingEntity>();
 		for(LivingEntity ent : modifiedEntities){
@@ -57,8 +66,8 @@ public class EntityModifier extends EntityListener {
 	
 	@Override
 	public void onEntityCombust(EntityCombustEvent event){
-		//if(!immuneToSunlight)
-		//	return;
+		
+		removeDeadEntities();
 		
 		if(modifiedEntities.contains(event.getEntity())){
 			event.setCancelled(true);
@@ -67,8 +76,8 @@ public class EntityModifier extends EntityListener {
 	
 	@Override
 	public void onEntityDamage(EntityDamageEvent event){
-		//if(!modifiesDamage())
-		//	return;
+
+		removeDeadEntities();
 		
 		if(event instanceof EntityDamageByEntityEvent){
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
