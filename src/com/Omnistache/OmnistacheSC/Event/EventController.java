@@ -10,28 +10,35 @@ import com.Omnistache.OmnistacheSC.OmnistacheSC;
  * in each world where there are events to run.
  * Also makes sure EntityControllers are running for each world
  * that has a configuration file
+ * schedules its own task
  */
 public class EventController implements Runnable {
 
 	private Server server;
 	private int eventControllerTaskId = -1;
+	private OmnistacheSC plugin;
 
 	public EventController(Server server, OmnistacheSC plugin) {
+		this.plugin = plugin;
 		this.server = server;
+		enable();
+	}
+	
+	public void enable(){
 		//it schedules itself
-		eventControllerTaskId = server.getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, OmnistacheSC.EVENT_CYCLE);
+		if(eventControllerTaskId == -1){
+			eventControllerTaskId = server.getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, OmnistacheSC.EVENT_CYCLE);
+		}
 	}
 	
 	public void disable(){
 		server.getScheduler().cancelTask(eventControllerTaskId);
-		server = null;
 		eventControllerTaskId = -1;
-		//TODO: cancel all other tasks associated FFFUUUUUU clean up loose ends avoid memory LEEEEAKS!!!!
 	}
 
 	@Override
 	public void run() {
-		//make sure entitycontrollers are running
+		//make sure entityControllers are running
 		
 		//make sure they have the correct static spawn groups
 		

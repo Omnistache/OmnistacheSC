@@ -74,6 +74,7 @@ public class SpawnGroup implements Runnable {
 		//get the number to try to spawn
 		int spawnCount = Math.min(openSpots, reinforceAmount);
 		
+		//try to spawn the bros
 		for(int i = 0; i < spawnCount; i++){
 			LivingEntity entity = spawnStyle.spawnEntity(world);
 			if(entity == null){
@@ -95,6 +96,19 @@ public class SpawnGroup implements Runnable {
 	 */
 	public boolean isActive(){
 		return (reinforceTaskId != -1);
+	}
+	
+	/*
+	 * checks to see if there are any living entities remaining
+	 * in the group
+	 */
+	public boolean isEmpty(){
+		removeDeadEntities();
+		return (livingEntities.size() == 0);
+	}
+	
+	public boolean isGroupDead(){
+		return (!isActive() && isEmpty());
 	}
 	
 	/*
@@ -126,6 +140,10 @@ public class SpawnGroup implements Runnable {
 				groupAI.runAI(ent);
 			}
 		}
+	}
+	
+	public boolean contains(LivingEntity livingEntity){
+		return livingEntities.contains(livingEntity);
 	}
 
 	@Override

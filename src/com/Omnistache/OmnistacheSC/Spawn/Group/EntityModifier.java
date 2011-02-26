@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 
 /*
  * Held inside a SpawnGroup, used to modify entities that were just spawned
+ * set starting health, change damage, change immunity to sunlight
  */
 public class EntityModifier extends EntityListener {
 
@@ -45,22 +46,26 @@ public class EntityModifier extends EntityListener {
 	}
 	
 	/*
-	 * removes dead entities from the modifiedentities list
+	 * removes dead entities from the modifiedEntities list
 	 */
 	private void removeDeadEntities(){
 		ArrayList<LivingEntity> remove = new ArrayList<LivingEntity>();
-		for(LivingEntity ent : modifiedEntities){
-			if(ent.getHealth() == 0){
-				remove.add(ent);
+		synchronized(modifiedEntities){
+			for(LivingEntity ent : modifiedEntities){
+				if(ent.getHealth() == 0){
+					remove.add(ent);
+				}
 			}
+			modifiedEntities.removeAll(remove);
 		}
-		modifiedEntities.removeAll(remove);
 	}
 
 	public void applyToEntity(LivingEntity livingEntity){
 		livingEntity.setHealth(startingHealth);
 		if(modifiesDamage() || immuneToSunlight){
-			modifiedEntities.add(livingEntity);
+			synchronized(modifiedEntities){
+				modifiedEntities.add(livingEntity);
+			}
 		}
 	}
 	
@@ -75,11 +80,9 @@ public class EntityModifier extends EntityListener {
 	}
 	
 	@Override
-	public void onEntityDamage(EntityDamageEvent event){
-
-		removeDeadEntities();
-		
+	public void onEntityDamage(EntityDamageEvent event){		
 		if(event instanceof EntityDamageByEntityEvent){
+			removeDeadEntities();
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
 			if(modifiedEntities.contains(damageEvent.getDamager())){
 				damageEvent.setDamage(damage);

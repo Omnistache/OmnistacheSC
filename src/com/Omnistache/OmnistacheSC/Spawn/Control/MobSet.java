@@ -1,6 +1,7 @@
 package com.Omnistache.OmnistacheSC.Spawn.Control;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
@@ -27,6 +28,7 @@ public enum MobSet {
 	/*
 	 * I have defeated java warnings with inline initialization of arraylists with
 	 * anonymous classes!!!!!!!!!
+	 * This enum is retarded.
 	*/
 	
 	All(new ArrayList<Class<? extends LivingEntity>>() {
@@ -75,15 +77,17 @@ public enum MobSet {
 	Squids(Squid.class),
 	Slimes(Slime.class);
 	
-	private ArrayList<Class<? extends LivingEntity>> classList = new ArrayList<Class<? extends LivingEntity>>();
+	private HashSet<Class<? extends LivingEntity>> classList;
 
 	private MobSet(){}
 
 	private MobSet(Class<? extends LivingEntity> class1){
+		classList = new HashSet<Class<? extends LivingEntity>>(1);
 		classList.add(class1);
 	}
 
 	private MobSet(ArrayList<Class<? extends LivingEntity>> classArray){
+		classList = new HashSet<Class<? extends LivingEntity>>(classArray.size());
 		classList.addAll(classArray);
 	}
 
