@@ -51,7 +51,8 @@ public class OmnistacheSC extends JavaPlugin {
 		getServer().getLogger().info(description.getName() + ", version: " + description.getVersion() + " is enabled!"); 
 	}
 	
-	public void onDisable() { 
+	public void onDisable() {
+		//TODO: Clean up EVERYTHING
 
 	} 
 	

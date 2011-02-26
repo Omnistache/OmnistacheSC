@@ -8,7 +8,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.Omnistache.OmnistacheSC.Spawn.Control.EntityController;
 import com.Omnistache.OmnistacheSC.Spawn.Group.AI.AI;
 import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
 

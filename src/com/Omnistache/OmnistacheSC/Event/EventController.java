@@ -24,6 +24,8 @@ public class EventController implements Runnable {
 	
 	public void disable(){
 		server.getScheduler().cancelTask(taskId);
+		server = null;
+		taskId = -1;
 		//TODO: cancel all other tasks associated FFFUUUUUU clean up loose ends avoid memory LEEEEAKS!!!!
 	}
 
