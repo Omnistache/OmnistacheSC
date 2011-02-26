@@ -30,7 +30,7 @@ public class EntityController implements Runnable {
 		
 		//update and check all the static groups
 		
-		//check non-static groups for removal (empty)
+		//check non-static groups for removal (empty and deactivated)
 		
 		//get a snapshot of all the spawn groups (hashsets for the win)
 		

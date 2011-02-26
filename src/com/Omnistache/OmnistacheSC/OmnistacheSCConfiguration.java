@@ -96,6 +96,9 @@ public class OmnistacheSCConfiguration {
 	}
 	
 	public boolean hasConfig(World world){
+		if(!worldConfig.containsKey(world))
+			return false;
+		
 		return worldConfig.get(world) != null;
 	}
 
@@ -105,17 +108,5 @@ public class OmnistacheSCConfiguration {
 	
 	public ArrayList<Phase> getPhases(){
 		return phases;
-	}
-	
-	public boolean getSkeletonSunburn(World world) {
-		return worldConfig.get(world).getBoolean("SkeletonSunburn", false);
-	}
-
-	public long getMaxEventDelay(World world) {
-		return worldConfig.get(world).getInt("MaxEventDelay", 12000);
-	}
-
-	public boolean getZombieSunburn(World world) {
-		return worldConfig.get(world).getBoolean("ZombieSunburn", false);
 	}
 }

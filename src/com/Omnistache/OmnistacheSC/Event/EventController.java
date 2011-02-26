@@ -19,7 +19,7 @@ public class EventController implements Runnable {
 	public EventController(Server server, OmnistacheSC plugin) {
 		this.server = server;
 		//it schedules itself
-		taskId = server.getScheduler().scheduleAsyncRepeatingTask(plugin, this, 100, OmnistacheSC.EVENT_CYCLE);
+		taskId = server.getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, OmnistacheSC.EVENT_CYCLE);
 	}
 	
 	public void disable(){

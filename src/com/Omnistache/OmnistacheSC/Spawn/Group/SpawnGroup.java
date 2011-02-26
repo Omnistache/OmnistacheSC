@@ -45,15 +45,18 @@ public class SpawnGroup implements Runnable {
 	}
 	
 	private void removeDeadEntities(){
+		
 		ArrayList<LivingEntity> remove = new ArrayList<LivingEntity>();
-		for(LivingEntity ent : livingEntities){
-			if(ent.getHealth() == 0){
-				remove.add(ent);
+		
+		synchronized(livingEntities){
+			for(LivingEntity ent : livingEntities){
+				if(ent.getHealth() == 0){
+					remove.add(ent);
+				}
 			}
+			livingEntities.removeAll(remove);
 		}
-		for(LivingEntity ent: remove){
-			livingEntities.remove(ent);
-		}
+		
 	}
 		
 	private void reinforce() {
@@ -68,7 +71,9 @@ public class SpawnGroup implements Runnable {
 				continue;
 			}
 			else {
-				livingEntities.add(entity);
+				synchronized(livingEntities){
+					livingEntities.add(entity);
+				}
 				spawnModifier.applyToEntity(entity);
 			}
 		}
@@ -95,9 +100,13 @@ public class SpawnGroup implements Runnable {
 	 * tick method for EntityController to tick the AI or something
 	 */
 	public void tickAI(){
+		
 		removeDeadEntities();
-		for(LivingEntity ent : livingEntities){
-			groupAI.runAI(ent);
+
+		synchronized(livingEntities){
+			for(LivingEntity ent : livingEntities){
+				groupAI.runAI(ent);
+			}
 		}
 	}
 
