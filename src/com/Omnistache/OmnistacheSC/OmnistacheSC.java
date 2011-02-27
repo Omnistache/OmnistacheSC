@@ -2,15 +2,10 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.bukkit.Server;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.Omnistache.OmnistacheSC.Event.EventController;
@@ -23,8 +18,8 @@ import com.Omnistache.OmnistacheSC.Event.EventController;
 public class OmnistacheSC extends JavaPlugin {
 	
 	public static final long EVENT_CYCLE = 100;
-	private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
-	
+	public static final long ENTITY_CONTROL_CYCLE = 10;
+
 	private EventController eventController = null;
 
 	public OmnistacheSC(PluginLoader pluginLoader, Server instance, 
@@ -50,22 +45,10 @@ public class OmnistacheSC extends JavaPlugin {
 
 	} 
 	
-	public boolean isDebugging(final Player player) { 
-		if (debugees.containsKey(player)) { 
-			return (Boolean) debugees.get(player); 
-		} else { 
-			return false; 
-		} 
-	}
-
 	public void restartEventController(){
 		if(eventController != null){
-			eventController.disable();
+			eventController.disableTask();
 		}
 		eventController = new EventController(getServer(), this);
 	}
-
-	public void setDebugging(final Player player, final boolean value) { 
-		debugees.put(player, value); 
-	} 
 } 

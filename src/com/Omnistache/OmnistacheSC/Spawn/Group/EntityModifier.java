@@ -22,12 +22,15 @@ public class EntityModifier extends EntityListener {
 	private int damage;
 	private HashSet<LivingEntity> modifiedEntities;
 	private boolean immuneToSunlight;
+	private boolean ignoreListener = false;
+	private Plugin plugin;
 
 	public EntityModifier(Plugin plugin, int startingHealth, int damage, int groupSize, boolean immuneToSunlight){
 		this.startingHealth = startingHealth;
 		this.damage = damage;
-		this.modifiedEntities = new HashSet<LivingEntity>(groupSize);
+		this.modifiedEntities = new HashSet<LivingEntity>(groupSize * 2);
 		this.immuneToSunlight = immuneToSunlight;
+		this.plugin = plugin;
 		if(modifiesDamage()){
 			plugin.getServer().getPluginManager().registerEvent(
 					Type.ENTITY_DAMAGED, this, Priority.Normal, plugin);
@@ -71,6 +74,8 @@ public class EntityModifier extends EntityListener {
 	
 	@Override
 	public void onEntityCombust(EntityCombustEvent event){
+		if(ignoreListener)
+			return;
 		
 		removeDeadEntities();
 		
@@ -80,7 +85,10 @@ public class EntityModifier extends EntityListener {
 	}
 	
 	@Override
-	public void onEntityDamage(EntityDamageEvent event){		
+	public void onEntityDamage(EntityDamageEvent event){
+		if(ignoreListener)
+			return;
+		
 		if(event instanceof EntityDamageByEntityEvent){
 			removeDeadEntities();
 			EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event;
@@ -88,6 +96,16 @@ public class EntityModifier extends EntityListener {
 				damageEvent.setDamage(damage);
 			}
 		}
+	}
+
+	public void disableAndFree() {
+		//no way to unregister the event listener currently, compromise by setting a flag to return
+		//when the listener is called
+		ignoreListener = true;
+		
+		modifiedEntities.clear();
+		modifiedEntities = null;
+		plugin = null;
 	}
 	
 	

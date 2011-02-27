@@ -23,7 +23,6 @@ public class SpawnGroup implements Runnable {
 	private World world;
 	private int groupSize;
 	private SpawnStyle spawnStyle;
-	private BukkitScheduler scheduler;
 	private Plugin plugin;
 	private long reinforceDelay;
 	private int reinforceTaskId = -1;
@@ -37,7 +36,6 @@ public class SpawnGroup implements Runnable {
 		this.spawnStyle = spawnStyle;
 		this.groupSize = groupSize;
 		this.livingEntities = new HashSet<LivingEntity>(groupSize);
-		this.scheduler = plugin.getServer().getScheduler();
 		this.plugin = plugin;
 		this.reinforceDelay = reinforceDelay;
 		this.reinforceAmount = reinforceAmount;
@@ -116,7 +114,7 @@ public class SpawnGroup implements Runnable {
 	 */
 	public void deactivateGroup(){
 		if(reinforceTaskId != -1){
-			scheduler.cancelTask(reinforceTaskId);
+			plugin.getServer().getScheduler().cancelTask(reinforceTaskId);
 			reinforceTaskId = -1;
 		}
 	}
@@ -125,7 +123,8 @@ public class SpawnGroup implements Runnable {
 	 */
 	public void activateGroup(){
 		if(reinforceTaskId == -1)
-			reinforceTaskId  = scheduler.scheduleAsyncRepeatingTask(plugin, this, 0, reinforceDelay);
+			reinforceTaskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(
+					plugin, this, 0, reinforceDelay);
 	}
 	
 	/*
@@ -142,6 +141,9 @@ public class SpawnGroup implements Runnable {
 		}
 	}
 	
+	/*
+	 * checks to see if the LivingEntity is part of this group 
+	 */
 	public boolean contains(LivingEntity livingEntity){
 		return livingEntities.contains(livingEntity);
 	}
@@ -150,5 +152,15 @@ public class SpawnGroup implements Runnable {
 	public void run() {
 		reinforce();
 	}
-	
+
+	public void stopAndRemove() {
+		deactivateGroup();
+		synchronized(livingEntities){
+			livingEntities.clear();
+			livingEntities = null;
+		}
+		world = null;
+		plugin = null;
+		spawnModifier.disableAndFree();
+	}
 }

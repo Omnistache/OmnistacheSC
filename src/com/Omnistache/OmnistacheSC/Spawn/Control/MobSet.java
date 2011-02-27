@@ -77,9 +77,11 @@ public enum MobSet {
 	Squids(Squid.class),
 	Slimes(Slime.class);
 	
-	private HashSet<Class<? extends LivingEntity>> classList;
+	private final HashSet<Class<? extends LivingEntity>> classList;
 
-	private MobSet(){}
+	private MobSet(){
+		classList = new HashSet<Class<? extends LivingEntity>>();
+	}
 
 	private MobSet(Class<? extends LivingEntity> class1){
 		classList = new HashSet<Class<? extends LivingEntity>>(1);
@@ -87,7 +89,7 @@ public enum MobSet {
 	}
 
 	private MobSet(ArrayList<Class<? extends LivingEntity>> classArray){
-		classList = new HashSet<Class<? extends LivingEntity>>(classArray.size());
+		classList = new HashSet<Class<? extends LivingEntity>>(classArray.size()*2);
 		classList.addAll(classArray);
 	}
 

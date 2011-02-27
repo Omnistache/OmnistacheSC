@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.Omnistache.OmnistacheSC.OmnistacheSC;
 import com.Omnistache.OmnistacheSC.Spawn.Group.SpawnGroup;
 
 /*
@@ -26,37 +28,44 @@ public class EntityController implements Runnable {
 
 	private Plugin plugin;
 
-	private MobSet removeMobs;
+	private MobSet unwantedMobs = MobSet.None;
 	
-	public EntityController(Plugin plugin, World world, MobSet removeMobs) {
+	public EntityController(Plugin plugin, World world) {
 		this.plugin = plugin;
 		this.world = world;
-		this.removeMobs = removeMobs;
+		enableTask();
 	}
 	
-	public void enable(){
+	public void setUnwantedMobs(MobSet unwantedMobs){
+		this.unwantedMobs = unwantedMobs;
+	}
+	
+	public void enableTask(){
 		if(entityControllerTaskId == -1){
-			entityControllerTaskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, 10);
+			entityControllerTaskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, this, 20, OmnistacheSC.ENTITY_CONTROL_CYCLE);
 		}
 	}
 	
-	public void disable(){
+	public void disableTask(){
 		plugin.getServer().getScheduler().cancelTask(entityControllerTaskId);
 		entityControllerTaskId = -1;
 	}
-
-	@Override
-	public void run() {
-		
-		//add new groups
+	
+	private void addNewGroups(){
 		synchronized(addSpawnGroups){
 			for(SpawnGroup addGroup : addSpawnGroups){
 				spawnGroups.add(addGroup);
 			}
 			addSpawnGroups.clear();
 		}
-		
-		//check groups for removal (empty and deactivated)
+	}
+	
+	/*
+	 * check groups for removal (empty and deactivated)
+	 * static groups are always active until marked for removal
+	 * or manually deactivated
+	 */
+	private void flagDeadGroups(){
 		synchronized(removeSpawnGroups){
 
 			for(SpawnGroup spawnGroup : spawnGroups){
@@ -64,7 +73,11 @@ public class EntityController implements Runnable {
 					removeSpawnGroups.add(spawnGroup);
 				}
 			}
-
+		}
+	}
+	
+	private void removeFlaggedGroups() {
+		synchronized(removeSpawnGroups){
 			//remove the groups flagged for removal
 			for(SpawnGroup removeGroup : removeSpawnGroups){
 				spawnGroups.remove(removeGroup);
@@ -73,6 +86,20 @@ public class EntityController implements Runnable {
 			}
 			removeSpawnGroups.clear();
 		}
+	}
+	
+	@Override
+	public void run() {
+		
+		//only run if players are logged in and in the world
+		if(!playersInWorld())
+			return;
+
+		addNewGroups();
+		
+		flagDeadGroups();
+		
+		removeFlaggedGroups();
 		
 		//get a snapshot of the living entities in the world (to prevent concurrent modification)
 		List<LivingEntity> livingEntities = world.getLivingEntities();
@@ -85,7 +112,7 @@ public class EntityController implements Runnable {
 		//livingEntitiesSafe is separate from the actual world entity list, so it won't have concurrent modification
 		//when we kill the entities (and the server removes them from the world)
 		for(LivingEntity livingEntity : livingEntitiesSafe){
-			if(removeMobs.match(livingEntity)){ //if it's one of the mobs we're removing
+			if(unwantedMobs.match(livingEntity)){ //if it's one of the mobs we're removing
 				if(!isEntityInAGroup(livingEntity)){ //and it's not in a group we're watching
 					livingEntity.remove(); //DESTROY IT
 				}
@@ -98,7 +125,17 @@ public class EntityController implements Runnable {
 		}
 
 	}
-	
+
+	private boolean playersInWorld() {
+		for(Player player : plugin.getServer().getOnlinePlayers()){
+			if(player.getWorld().equals(world)){ //this should work
+				return true;
+			}
+		}
+		plugin.getServer().getLogger().info("no players in world " + world.getName());
+		return false;
+	}
+
 	private boolean isEntityInAGroup(LivingEntity livingEntity){
 		/* INFO:
 		 * spawnGroups is only used in the run() method, so it does not need to be synchronized
@@ -133,6 +170,16 @@ public class EntityController implements Runnable {
 		synchronized(removeSpawnGroups){
 			removeSpawnGroups.add(spawnGroup);
 		}
+	}
+
+	public void stopAndRemove() {
+		disableTask();
+		synchronized(spawnGroups){ //precaution if the run method isn't finished in the off chance it was started just before the task was disabled
+			for(SpawnGroup spawnGroup : spawnGroups){
+				spawnGroup.stopAndRemove();
+			}
+		}
+		
 	}
 
 }

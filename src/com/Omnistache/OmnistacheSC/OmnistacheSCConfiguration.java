@@ -12,6 +12,7 @@ import org.bukkit.util.config.Configuration;
 
 import com.Omnistache.OmnistacheSC.Event.Event;
 import com.Omnistache.OmnistacheSC.Event.Phase;
+import com.Omnistache.OmnistacheSC.Spawn.Control.EntityController;
 
 public class OmnistacheSCConfiguration {
 
@@ -53,10 +54,7 @@ public class OmnistacheSCConfiguration {
 
 			File configFile = new File(omnistacheSC.getDataFolder(), world.getName()+"_config.yml");
 
-			if(!configFile.exists()){
-				worldConfig.put(world, null);
-			}
-			else {
+			if(configFile.exists()){
 				worldConfig.put(world, new Configuration(configFile));
 			}
 		}
@@ -108,5 +106,17 @@ public class OmnistacheSCConfiguration {
 	
 	public ArrayList<Phase> getPhases(){
 		return phases;
+	}
+
+	/**
+	 * creates a new EntityController based on the configuration of the given world
+	 * inserts the static spawn groups from the configuration file
+	 * 
+	 * @param world
+	 * @return
+	 */
+	public EntityController entityControllerFromConfiguration(World world) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
