@@ -28,7 +28,7 @@ public class SpawnGroup implements Runnable {
 	private int reinforceTaskId = -1;
 	private AI groupAI;
 	private int reinforceAmount;
-	private EntityModifier spawnModifier;
+	private EntityModifier entityModifier;
 	
 	public SpawnGroup(Plugin plugin, World world, SpawnStyle spawnStyle, EntityModifier spawnModifier,
 			int groupSize, int reinforceDelay, AI groupAI, int reinforceAmount){
@@ -40,7 +40,7 @@ public class SpawnGroup implements Runnable {
 		this.reinforceDelay = reinforceDelay;
 		this.reinforceAmount = reinforceAmount;
 		this.groupAI = groupAI;
-		this.spawnModifier = spawnModifier;
+		this.entityModifier = spawnModifier;
 	}
 	
 	/*
@@ -82,7 +82,7 @@ public class SpawnGroup implements Runnable {
 				synchronized(livingEntities){
 					livingEntities.add(entity);
 				}
-				spawnModifier.applyToEntity(entity);
+				entityModifier.applyToEntity(entity);
 			}
 		}
 	}
@@ -122,9 +122,10 @@ public class SpawnGroup implements Runnable {
 	 * starts the internal reinforce timer if it is not running
 	 */
 	public void activateGroup(){
-		if(reinforceTaskId == -1)
+		if(reinforceTaskId == -1){
 			reinforceTaskId = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(
 					plugin, this, 0, reinforceDelay);
+		}
 	}
 	
 	/*
@@ -161,6 +162,6 @@ public class SpawnGroup implements Runnable {
 		}
 		world = null;
 		plugin = null;
-		spawnModifier.disableAndFree();
+		entityModifier.disableAndFree();
 	}
 }

@@ -90,7 +90,7 @@ public class EventController implements Runnable {
 		}
 		
 		for(World world : worldsSafe){
-			//make sure entityController are running
+			//make sure EntityController is running
 			validateEntityController(world);
 
 			/* Check the current event state of the world

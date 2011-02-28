@@ -23,14 +23,14 @@ public class EntityModifier extends EntityListener {
 	private HashSet<LivingEntity> modifiedEntities;
 	private boolean immuneToSunlight;
 	private boolean ignoreListener = false;
-	private Plugin plugin;
+	//private Plugin plugin; save for when we can unregister listeners
 
 	public EntityModifier(Plugin plugin, int startingHealth, int damage, int groupSize, boolean immuneToSunlight){
 		this.startingHealth = startingHealth;
 		this.damage = damage;
 		this.modifiedEntities = new HashSet<LivingEntity>(groupSize * 2);
 		this.immuneToSunlight = immuneToSunlight;
-		this.plugin = plugin;
+		//this.plugin = plugin;
 		if(modifiesDamage()){
 			plugin.getServer().getPluginManager().registerEvent(
 					Type.ENTITY_DAMAGED, this, Priority.Normal, plugin);
@@ -105,7 +105,7 @@ public class EntityModifier extends EntityListener {
 		
 		modifiedEntities.clear();
 		modifiedEntities = null;
-		plugin = null;
+		//plugin = null;
 	}
 	
 	
