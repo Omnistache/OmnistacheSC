@@ -22,17 +22,9 @@ public class OmnistacheSC extends JavaPlugin {
 
 	private EventController eventController = null;
 
-	public OmnistacheSC(PluginLoader pluginLoader, Server instance, 
-			PluginDescriptionFile desc, File folder, File plugin, 
-			ClassLoader cLoader) throws IOException { 
-		super(); 
-
-		//Load the configuration files
-		OmnistacheSCConfiguration.INSTANCE.initialize(this);
-	} 
-
 	public void onEnable() { 
 
+		OmnistacheSCConfiguration.INSTANCE.initialize(this);
 		//start up the event controller
 		restartEventController();
 		

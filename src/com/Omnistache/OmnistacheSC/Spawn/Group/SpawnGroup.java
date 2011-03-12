@@ -6,7 +6,6 @@ import java.util.HashSet;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import com.Omnistache.OmnistacheSC.Spawn.Group.AI.AI;
 import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
