@@ -30,6 +30,7 @@ public class EventController implements Runnable {
 		this.plugin = plugin;
 		this.server = server;
 		entityControllers = new HashMap<World, EntityController>(server.getWorlds().size() * 2);
+		activeEvents = new HashMap<World, ArrayList<Event>>(server.getWorlds().size() * 2);
 		enableTask();
 	}
 	
@@ -82,7 +83,7 @@ public class EventController implements Runnable {
 	
 	public void cycleEventController() {
 		
-		//grab a thread-safe snapshot of the world list
+		//grab a thread-safe snapshot of the world list in the off chance a new world is created
 		List<World> worlds = server.getWorlds();
 		ArrayList<World> worldsSafe;
 		synchronized(worlds){
@@ -98,9 +99,76 @@ public class EventController implements Runnable {
 			 * 		to start a new event
 			 * Event is running - do nothing, event takes care of itself
 			 */
+			
+			if(eventsOnCooldown(world)){
+				
+			}
+			
+			if(!eventsRunning(world)){
+				
+			}
 
 			//TODO: attempt to start events in each world
 		}
 
 	}
+
+	/**
+	 * returns true iff all existing events are on cooldown
+	 * returns false if no events are running
+	 * @param world
+	 * @return
+	 */
+	private boolean eventsOnCooldown(World world) {
+		
+		ArrayList<Event> events = activeEvents.get(world);
+		
+		if(events.isEmpty()){
+			return false;
+		}
+		
+		removeCompletedEvents(events);
+		
+		if()
+		
+		return false;
+	}
+
+	private void removeCompletedEvents(ArrayList<Event> events) {
+		//remove completed events
+		ArrayList<Event> remove = new ArrayList<Event>();
+		for(Event event : events){
+			if(event.isComplete()){
+				event.dispose();
+				remove.add(event);
+			}
+		}
+		events.removeAll(remove);
+	}
+
+	/**
+	 * returns true iff there is at least one event running
+	 * note that this event can be on cooldown
+	 * @param world
+	 * @return
+	 */
+	private boolean eventsRunning(World world) {
+		
+		ArrayList<Event> events = activeEvents.get(world);
+		
+		//check if it's empty first
+		if(events.isEmpty()){
+			return false;
+		}
+		
+		removeCompletedEvents(events);
+
+		//check if it's empty again
+		if(events.isEmpty()){
+			return false;
+		}
+		
+		return true;
+	}
+	
 }
