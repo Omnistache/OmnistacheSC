@@ -97,7 +97,9 @@ public class SpawnGroup implements Runnable {
 				synchronized(livingEntities){
 					livingEntities.add(entity);
 				}
-				entityModifier.applyToEntity(entity);
+				if(entityModifier != null){
+					entityModifier.applyToEntity(entity);
+				}
 			}
 		}
 	}
@@ -214,24 +216,29 @@ public class SpawnGroup implements Runnable {
 	
 	public static SpawnGroup fromConfiguration(ConfigurationNode configuration, String name, World world, Plugin plugin){
 		
-		Logger logger = plugin.getServer().getLogger();
+		Logger logger = OmnistacheSC.logger;
 		
-		int reinforceAmount = configuration.getInt("ReinforceAmount", 2);
-		int groupSize = configuration.getInt("GroupSize", DEFAULT_GROUP_SIZE);
-		int reinforceDelay = configuration.getInt("ReinforceDelay", 1000);
+		if(configuration == null){
+			logger.info("Could not create spawn group " + name + ", configuration missing");
+			return null;
+		}
+		
+		int reinforceAmount = configuration.getInt("reinforceAmount", 2);
+		int groupSize = configuration.getInt("groupSize", DEFAULT_GROUP_SIZE);
+		int reinforceDelay = configuration.getInt("reinforceDelay", 1000);
 		
 		if(reinforceDelay < 20){
 			reinforceDelay = 20;
-			logger.info("ReinforceDelay cannot be less than 20 (once per second), so it has been set to 20");
+			logger.info("reinforceDelay cannot be less than 20 (once per second), so it has been set to 20");
 		}
 		
 		if(groupSize <= 0){
-			logger.info("Invalid GroupSize: " + groupSize + ", setting to default (" + DEFAULT_GROUP_SIZE + ")");
+			logger.info("Invalid groupSize: " + groupSize + ", setting to default (" + DEFAULT_GROUP_SIZE + ")");
 			groupSize = DEFAULT_GROUP_SIZE;
 		}
 		
 		if(groupSize > 100){
-			logger.info("Invalid GroupSize: " + groupSize + ", too large, setting to max (" + MAX_GROUP_SIZE + ")");
+			logger.info("Invalid groupSize: " + groupSize + ", too large, setting to max (" + MAX_GROUP_SIZE + ")");
 			groupSize = MAX_GROUP_SIZE;
 		}
 		
@@ -240,6 +247,10 @@ public class SpawnGroup implements Runnable {
 		ConfigurationNode groupAINode = configuration.getNode("GroupAI");
 		
 		SpawnStyle spawnStyle = SpawnStyleFactory.fromConfiguration(spawnStyleNode);
+		if(spawnStyle == null){
+			logger.info("Could not create SpawnGroup " + name + ", invalid/missing SpawnStyle");
+			return null;
+		}
 		
 		EntityModifier entityModifier = EntityModifier.fromConfiguration(entityModifierNode, groupSize, plugin);
 		

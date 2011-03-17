@@ -13,6 +13,8 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.ConfigurationNode;
 
+import com.Omnistache.OmnistacheSC.OmnistacheSC;
+
 /*
  * Held inside a SpawnGroup, used to modify entities that were just spawned
  * set starting health, change damage, change immunity to sunlight
@@ -111,7 +113,8 @@ public class EntityModifier extends EntityListener {
 	
 	public static EntityModifier fromConfiguration(ConfigurationNode configuration, int groupSize, Plugin plugin){
 		if(configuration == null){
-			return new EntityModifier(plugin, -1, -1, groupSize, false);
+			OmnistacheSC.logger.info("EntityModifier configuration null, no modification will occur.");
+			return null;
 		}
 		
 		int damage = configuration.getInt("damage", -1);

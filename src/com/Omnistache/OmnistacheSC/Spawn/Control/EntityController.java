@@ -103,6 +103,9 @@ public class EntityController implements Runnable {
 		removeFlaggedGroups();
 		
 		//get a snapshot of the living entities in the world (to prevent concurrent modification)
+		//TODO: this may actually break with concurrent modification...
+		//might have to grab a lazy update list of entities running in the main thread
+		//(or synchronized task)
 		List<LivingEntity> livingEntities = world.getLivingEntities();
 		ArrayList<LivingEntity> livingEntitiesSafe;
 		synchronized(livingEntities){

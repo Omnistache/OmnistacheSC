@@ -1,99 +1,220 @@
 package com.Omnistache.OmnistacheSC.Spawn.Control;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Ghast;
-import org.bukkit.entity.Giant;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Squid;
-import org.bukkit.entity.Zombie;
+import org.bukkit.util.config.ConfigurationNode;
+
+import com.Omnistache.OmnistacheSC.OmnistacheSC;
 
 /*
  * MobSet is used by the EntityController thread
  * to check whether an entity is allowed in the world/should be removed
+ * You can use a MobSet in place of CreatureType in the world.spawnCreature method
+ * so you can spawn giants you normally could not
+ * use a cast, and it will randomly select a mob type to spawn from the MobSet
+ * if you're using MobSet.None, the world.spawnCreature method should return null
  */
 
 public enum MobSet {
-
-	/*
-	 * I have defeated java warnings with inline initialization of arraylists with
-	 * anonymous classes!!!!!!!!!
-	 * This enum is retarded.
-	*/
 	
-	All(new ArrayList<Class<? extends LivingEntity>>() {
-		private static final long serialVersionUID = 1L;
-	{
-		add(Chicken.class); add(Cow.class); add(Pig.class); add(Sheep.class);
-		add(Creeper.class); add(Ghast.class); add(Giant.class); add(PigZombie.class);
-		add(Skeleton.class); add(Spider.class); add(Zombie.class); add(Squid.class);
-		add(Slime.class);
-	}}),
+	All("Chicken", "Cow", "Pig", "Sheep", 
+		"Creeper", "Ghast", "Giant", "PigZombie", 
+		"Skeleton", "Spider", "Zombie", "Squid", 
+		"Slime"),
 	None(),
-	Animals(new ArrayList<Class<? extends LivingEntity>>() {
-		private static final long serialVersionUID = 1L;
-	{
-		add(Chicken.class); add(Cow.class); add(Pig.class); add(Sheep.class);
-	}}),
-	Monsters(new ArrayList<Class<? extends LivingEntity>>() {
-		private static final long serialVersionUID = 1L;
-	{
-		add(Creeper.class); add(Ghast.class); add(Giant.class); add(PigZombie.class);
-		add(Skeleton.class); add(Spider.class); add(Zombie.class);
-	}}),
-	LandDwelling(new ArrayList<Class<? extends LivingEntity>>() {
-		private static final long serialVersionUID = 1L;
-	{
-		add(Chicken.class); add(Cow.class); add(Pig.class);	add(Sheep.class);
-		add(Creeper.class);	add(Giant.class); add(PigZombie.class); add(Skeleton.class);
-		add(Spider.class); add(Zombie.class); add(Slime.class);
-	}}),
-	SeaDwelling(Squid.class),
-	Flying(Ghast.class),
-	
-	Chickens(Chicken.class),
-	Cows(Cow.class),
-	Pigs(Pig.class),
-	Sheeps(Sheep.class),
+	Animals("Chicken", "Cow", "Pig", "Sheep"),
+	Monsters("Creeper", "Ghast", "Giant", "PigZombie", 
+		"Skeleton", "Spider", "Zombie"),
+	LandDwelling("Chicken", "Cow", "Pig", 	"Sheep", 
+		"Creeper", 	"Giant", "PigZombie", "Skeleton", 
+		"Spider", "Zombie", "Slime"),
+	SeaDwelling("Squid"),
+	Flying("Ghast"),
+	Chickens("Chicken"),
+	Cows("Cow"),
+	Pigs("Pig"),
+	Sheeps("Sheep"),
 
-	Creepers(Creeper.class),
-	Ghasts(Ghast.class),
-	Giants(Giant.class),
-	PigZombies(PigZombie.class),
-	Skeletons(Skeleton.class),
-	Spiders(Spider.class),
-	Zombies(Zombie.class),
+	Creepers("Creeper"),
+	Ghasts("Ghast"),
+	Giants("Giant"),
+	PigZombies("PigZombie"),
+	Skeletons("Skeleton"),
+	Spiders("Spider"),
+	Zombies("Zombie"),
 	
-	Squids(Squid.class),
-	Slimes(Slime.class);
+	Squids("Squid"),
+	Slimes("Slime");
 	
-	private final HashSet<Class<? extends LivingEntity>> classList;
-
-	private MobSet(){
-		classList = new HashSet<Class<? extends LivingEntity>>();
+	private HashSet<String> types = new HashSet<String>();
+	
+	private MobSet(String... names){
+		types.addAll(Arrays.asList(names));
+	}
+	
+	public void or(MobSet mobSet){
+		types.addAll(mobSet.types);
+	}
+	
+	public void not(MobSet mobSet){
+		types.removeAll(mobSet.types);
+	}
+	
+	/**
+	 * made public if you want to manually do what
+	 * MobSet.fromConfiguration does
+	 * @param stringList
+	 * @return
+	 */
+	public static MobSet fromStringList(List<String> stringList){
+		MobSet mobSet = MobSet.None;
+		
+		if(stringList == null){
+			return mobSet;
+		}
+		
+		if(stringList.isEmpty()){
+			return mobSet;
+		}
+		
+		//find not keywords and separate into two sets of mob types
+		Set<String> notSet = new HashSet<String>();
+		Set<String> orSet = new HashSet<String>();
+		for(String type : stringList){
+			if(type.toLowerCase().startsWith("not ")){
+				notSet.add(type.substring(4).trim());
+			} else {
+				orSet.add(type.trim());
+			}
+		}
+		if(orSet.isEmpty()){
+			OmnistacheSC.logger.info("Could not specify MobSet from String List, only contained NOT keywords, using MobSet.None");
+			return mobSet;
+		}
+		
+		for(String type : orSet){
+			try{
+				MobSet orMobSet = MobSet.valueOf(type);
+				mobSet.or(orMobSet);
+			}
+			catch (IllegalArgumentException e){
+				OmnistacheSC.logger.info("Invalid MobSet type " + type + "!");
+				e.printStackTrace();
+			}
+		}
+		
+		for(String type : notSet){
+			try{
+				MobSet notMobSet = MobSet.valueOf(type);
+				mobSet.not(notMobSet);
+			}
+			catch (IllegalArgumentException e){
+				OmnistacheSC.logger.info("Invalid MobSet type " + type + "!");
+				e.printStackTrace();
+			}
+		}
+		return mobSet;
+	}
+	/**
+	 * takes a configuration node and a path to some data specifying mobs for a mobset
+	 * data can either be a single string or a list of strings
+	 * will create a MobSet from the strings at the designated configurationPath
+	 * using the keyword "not" before a mob type in the configuration
+	 * removes it from the MobSet
+	 * @param configuration
+	 * @param configurationPath
+	 * @return
+	 */
+	public static MobSet fromConfiguration(ConfigurationNode configuration, String configurationPath){
+		List<String> mobList = configuration.getStringList(configurationPath, null);
+		if(mobList.isEmpty()){
+			//could be a single string so try...
+			String mob = configuration.getString(configurationPath);
+			if(mob == null){
+				//no data
+				return MobSet.None;
+			} //return pyramids
+			return MobSet.fromString(mob);
+		}       //are cool
+		return MobSet.fromStringList(mobList);
 	}
 
-	private MobSet(Class<? extends LivingEntity> class1){
-		classList = new HashSet<Class<? extends LivingEntity>>(1);
-		classList.add(class1);
+	/**
+	 * made public so you can manually do
+	 * what MobSet.fromConfiguration does
+	 * @param mob
+	 * @return
+	 */
+	public static MobSet fromString(String mob) {
+		List<String> mobList = new ArrayList<String>();
+		mobList.add(mob);
+		return MobSet.fromStringList(mobList);
 	}
 
-	private MobSet(ArrayList<Class<? extends LivingEntity>> classArray){
-		classList = new HashSet<Class<? extends LivingEntity>>(classArray.size()*2);
-		classList.addAll(classArray);
-	}
-
+	/**
+	 * matches a livingEntity to this MobSet
+	 * returns true iff the entity type is present in
+	 * the MobSet
+	 * @param livingEntity
+	 * @return
+	 */
 	public boolean match(LivingEntity livingEntity){
-		return classList.contains(livingEntity.getClass());
-	}	
+		if(types.isEmpty()){
+			return false;
+		}
+		
+		String entityName = livingEntity.toString();
+		if(entityName.startsWith("Craft")){
+			entityName = entityName.substring(5);
+			return types.contains(entityName);
+		}
+		return false;
+		
+	}
+	/**
+	 * Selects a random name from the MobSet
+	 * @return
+	 */
+	private String randomCreatureTypeName(){
+		if(types.isEmpty()){
+			return null;
+		}
+		
+		String[] typeArray = (String[]) types.toArray();
+		int arrayLength = typeArray.length;
+		
+		int randomIndex = (new Random()).nextInt(arrayLength);
+		String type = typeArray[randomIndex];
+		
+		return type;
+		
+	}
+	
+	/**
+	 * note that this method returns null
+	 * if it selects a Giant because CreatureType does
+	 * not currently allow the spawning of Giants
+	 * sadly (cast MobSet to CreatureType instead and use that)
+	 * @return
+	 */
+	public CreatureType randomCreatureType(){
+		return CreatureType.fromName(randomCreatureTypeName());
+	}
+	
+	/**
+	 * this is for compatibility to cast to a CreatureType and used in
+	 * world.spawnCreature
+	 * @return
+	 */
+    public String getName() {
+        return randomCreatureTypeName();
+    }
+    
 }
