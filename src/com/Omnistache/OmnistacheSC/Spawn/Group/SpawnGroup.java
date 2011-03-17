@@ -1,14 +1,22 @@
 package com.Omnistache.OmnistacheSC.Spawn.Group;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.config.ConfigurationNode;
 
+import com.Omnistache.OmnistacheSC.OmnistacheSC;
 import com.Omnistache.OmnistacheSC.Spawn.Group.AI.AI;
+import com.Omnistache.OmnistacheSC.Spawn.Group.AI.AIFactory;
 import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
+import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyleFactory;
 
 /*
  * Contains information regarding a group of spawned entities
@@ -18,6 +26,13 @@ import com.Omnistache.OmnistacheSC.Spawn.Group.Style.SpawnStyle;
  */
 public class SpawnGroup implements Runnable {
 
+	private static final int DEFAULT_GROUP_SIZE = 10;
+
+	private static final int MAX_GROUP_SIZE = 100;
+
+	private static List<SpawnGroup> spawnGroups = new ArrayList<SpawnGroup>();
+
+	private final String name;
 	private HashSet<LivingEntity> livingEntities = null;
 	private World world;
 	private int groupSize;
@@ -29,8 +44,8 @@ public class SpawnGroup implements Runnable {
 	private int reinforceAmount;
 	private EntityModifier entityModifier;
 	
-	public SpawnGroup(Plugin plugin, World world, SpawnStyle spawnStyle, EntityModifier spawnModifier,
-			int groupSize, int reinforceDelay, AI groupAI, int reinforceAmount){
+	public SpawnGroup(Plugin plugin, World world, SpawnStyle spawnStyle, EntityModifier entityModifier,
+			int groupSize, int reinforceDelay, AI groupAI, int reinforceAmount, final String name){
 		this.world = world;
 		this.spawnStyle = spawnStyle;
 		this.groupSize = groupSize;
@@ -39,7 +54,9 @@ public class SpawnGroup implements Runnable {
 		this.reinforceDelay = reinforceDelay;
 		this.reinforceAmount = reinforceAmount;
 		this.groupAI = groupAI;
-		this.entityModifier = spawnModifier;
+		this.entityModifier = entityModifier;
+		this.name = name;
+		addGroup(this);
 	}
 	
 	/*
@@ -58,7 +75,6 @@ public class SpawnGroup implements Runnable {
 			}
 			livingEntities.removeAll(remove);
 		}
-		
 	}
 
 	/*
@@ -134,6 +150,10 @@ public class SpawnGroup implements Runnable {
 		
 		removeDeadEntities();
 
+		if(groupAI == null){
+			return;
+		}
+		
 		synchronized(livingEntities){
 			for(LivingEntity ent : livingEntities){
 				groupAI.runAI(ent);
@@ -155,6 +175,7 @@ public class SpawnGroup implements Runnable {
 
 	public void stopAndRemove() {
 		deactivateGroup();
+		removeGroup(this);
 		synchronized(livingEntities){
 			livingEntities.clear();
 			livingEntities = null;
@@ -163,4 +184,68 @@ public class SpawnGroup implements Runnable {
 		plugin = null;
 		entityModifier.disableAndFree();
 	}
+	
+	public static void addGroup(SpawnGroup spawnGroup){
+		spawnGroups.add(spawnGroup);
+	}
+	
+	public static void removeGroup(SpawnGroup spawnGroup){
+		spawnGroups.remove(spawnGroup);
+	}
+	
+	public static SpawnGroup getFirstGroup(String name){
+		for(SpawnGroup spawnGroup : spawnGroups){
+			if(spawnGroup.name.equals(name)){
+				return spawnGroup;
+			}
+		}
+		return null;
+	}
+	
+	public static List<SpawnGroup> getGroups(String name){
+		List<SpawnGroup> spawnGroupList = new ArrayList<SpawnGroup>();
+		for(SpawnGroup spawnGroup : spawnGroups){
+			if(spawnGroup.name.equals(name)){
+				spawnGroupList.add(spawnGroup);
+			}
+		}
+		return spawnGroupList;
+	}
+	
+	public static SpawnGroup fromConfiguration(ConfigurationNode configuration, String name, World world, Plugin plugin){
+		
+		Logger logger = plugin.getServer().getLogger();
+		
+		int reinforceAmount = configuration.getInt("ReinforceAmount", 2);
+		int groupSize = configuration.getInt("GroupSize", DEFAULT_GROUP_SIZE);
+		int reinforceDelay = configuration.getInt("ReinforceDelay", 1000);
+		
+		if(reinforceDelay < 20){
+			reinforceDelay = 20;
+			logger.info("ReinforceDelay cannot be less than 20 (once per second), so it has been set to 20");
+		}
+		
+		if(groupSize <= 0){
+			logger.info("Invalid GroupSize: " + groupSize + ", setting to default (" + DEFAULT_GROUP_SIZE + ")");
+			groupSize = DEFAULT_GROUP_SIZE;
+		}
+		
+		if(groupSize > 100){
+			logger.info("Invalid GroupSize: " + groupSize + ", too large, setting to max (" + MAX_GROUP_SIZE + ")");
+			groupSize = MAX_GROUP_SIZE;
+		}
+		
+		ConfigurationNode spawnStyleNode = configuration.getNode("SpawnStyle");
+		ConfigurationNode entityModifierNode = configuration.getNode("EntityModifier");
+		ConfigurationNode groupAINode = configuration.getNode("GroupAI");
+		
+		SpawnStyle spawnStyle = SpawnStyleFactory.fromConfiguration(spawnStyleNode);
+		
+		EntityModifier entityModifier = EntityModifier.fromConfiguration(entityModifierNode, groupSize, plugin);
+		
+		AI groupAI = AIFactory.fromConfiguration(groupAINode);
+		
+		SpawnGroup spawnGroup = new SpawnGroup(plugin, world, spawnStyle, entityModifier, groupSize, reinforceDelay, groupAI, reinforceAmount, name);
+		return spawnGroup;
+	}	
 }

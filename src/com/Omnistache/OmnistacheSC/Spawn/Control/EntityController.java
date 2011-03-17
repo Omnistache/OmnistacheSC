@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.Omnistache.OmnistacheSC.OmnistacheSC;
+import com.Omnistache.OmnistacheSC.OmnistacheSCConfiguration;
 import com.Omnistache.OmnistacheSC.Spawn.Group.SpawnGroup;
 
 /*
@@ -178,8 +179,11 @@ public class EntityController implements Runnable {
 			for(SpawnGroup spawnGroup : spawnGroups){
 				spawnGroup.stopAndRemove();
 			}
-		}
-		
+		}	
 	}
 
+	public void resetUnwantedMobs() {
+		MobSet unwantedMobs = OmnistacheSCConfiguration.INSTANCE.getDefaultUnwantedMobs(world);
+		this.unwantedMobs = unwantedMobs;
+	}
 }

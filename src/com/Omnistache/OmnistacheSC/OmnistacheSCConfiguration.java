@@ -4,15 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Map;
 import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
-import com.Omnistache.OmnistacheSC.Event.Event;
-import com.Omnistache.OmnistacheSC.Event.Phase;
 import com.Omnistache.OmnistacheSC.Spawn.Control.EntityController;
+import com.Omnistache.OmnistacheSC.Spawn.Control.MobSet;
+import com.Omnistache.OmnistacheSC.Spawn.Group.SpawnGroup;
 
 public class OmnistacheSCConfiguration {
 
@@ -20,8 +20,6 @@ public class OmnistacheSCConfiguration {
 	private HashMap<World, Configuration> worldConfig = new HashMap<World, Configuration>();
 	private Configuration phasesConfig;
 	private OmnistacheSC omnistacheSC;
-	private ArrayList<Phase> phases = new ArrayList<Phase>();
-	private HashMap<World, ArrayList<Event>> events = new HashMap<World,ArrayList<Event>>();
 	
 	private OmnistacheSCConfiguration(){} //singleton
 	
@@ -45,6 +43,7 @@ public class OmnistacheSCConfiguration {
 				in.close();
 				out.close();
 			} catch (IOException e) {
+				omnistacheSC.getServer().getLogger().info("Failed to copy default world configuration to plugin directory");
 				e.printStackTrace();
 			}
 		}
@@ -55,14 +54,11 @@ public class OmnistacheSCConfiguration {
 			File configFile = new File(omnistacheSC.getDataFolder(), world.getName()+"_config.yml");
 
 			if(configFile.exists()){
-				worldConfig.put(world, new Configuration(configFile));
+				addConfiguration(world, new Configuration(configFile));
 			}
 		}
 		
-		for(Configuration configuration : worldConfig.values()){
-			if(configuration != null)
-				configuration.load();
-		}
+		reloadConfigurations();
 
 		//Load phases
 
@@ -88,24 +84,46 @@ public class OmnistacheSCConfiguration {
 		phasesConfig = new Configuration(phasesFile);
 		phasesConfig.load();
 	}
-
-	public void reload(){
+	
+	public void reInitialize(){
+		worldConfig.clear();
 		initialize(omnistacheSC);
+	}
+	
+	public void reloadConfigurations(){
+		for(Configuration configuration : worldConfig.values()){
+			if(configuration != null)
+				configuration.load();
+		}
 	}
 	
 	public boolean hasConfig(World world){
 		if(!worldConfig.containsKey(world))
 			return false;
 		
-		return worldConfig.get(world) != null;
-	}
-
-	public ArrayList<Event> getEvents(World world){
-		return events.get(world);
+		if(worldConfig.get(world) == null)
+			return false;
+		
+		return true;
 	}
 	
-	public ArrayList<Phase> getPhases(){
-		return phases;
+	
+	/**
+	 * Associates a configuration object to a world,
+	 * can be used by other plugins to manually create configurations
+	 * @param world
+	 * @param configuration
+	 */
+	public void addConfiguration(World world, Configuration configuration){
+		if(world == null){
+			omnistacheSC.getServer().getLogger().info(getClass().getSimpleName() + ": cannot associate config to null world");
+			return;
+		}
+		if(configuration == null){
+			omnistacheSC.getServer().getLogger().info(getClass().getSimpleName() + ": associating null config with world " + world.getName());
+		}
+		
+		worldConfig.put(world, configuration);
 	}
 
 	/**
@@ -113,10 +131,41 @@ public class OmnistacheSCConfiguration {
 	 * inserts the static spawn groups from the configuration file
 	 * 
 	 * @param world
-	 * @return
+	 * @return EntityController
 	 */
 	public EntityController entityControllerFromConfiguration(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityController entityController = new EntityController(omnistacheSC, world);
+		Configuration config = worldConfig.get(world);
+	
+		Map<String, ConfigurationNode> nodeMap = config.getNodes("StaticGroups");
+	
+		for(String name : nodeMap.keySet()){
+			SpawnGroup spawnGroup = SpawnGroup.fromConfiguration(nodeMap.get(name), name, world, omnistacheSC);
+			if(spawnGroup == null){
+				omnistacheSC.getServer().getLogger().info("Spawn Group " + name + " could not be loaded.");
+			}
+			entityController.addSpawnGroup(spawnGroup);
+			entityController.resetUnwantedMobs();
+		}
+		return entityController;
+	}
+
+	/**
+	 * reads the default removeMobs from the world's config file.
+	 * returns None if there's no config, or if the value in the config is invalid.
+	 * @param world
+	 * @return
+	 */
+	public MobSet getDefaultUnwantedMobs(World world) {
+		if(!worldConfig.containsKey(world)){
+			return MobSet.None;
+		}
+		String removeMobString = worldConfig.get(world).getString("RemoveMobs", "None");
+		MobSet unwantedMobs = MobSet.valueOf(removeMobString);
+		if(unwantedMobs == null){
+			omnistacheSC.getServer().getLogger().info("RemoveMobs was unreadable: " + removeMobString);
+			return MobSet.None;
+		}
+		return unwantedMobs;
 	}
 }

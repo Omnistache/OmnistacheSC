@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.config.ConfigurationNode;
 
 /*
  * Held inside a SpawnGroup, used to modify entities that were just spawned
@@ -108,5 +109,17 @@ public class EntityModifier extends EntityListener {
 		//plugin = null;
 	}
 	
+	public static EntityModifier fromConfiguration(ConfigurationNode configuration, int groupSize, Plugin plugin){
+		if(configuration == null){
+			return new EntityModifier(plugin, -1, -1, groupSize, false);
+		}
+		
+		int damage = configuration.getInt("damage", -1);
+		int health = configuration.getInt("health", -1);
+		boolean immuneToSunlight = configuration.getBoolean("immuneToSunlight", false);
+		
+		EntityModifier entityModifier = new EntityModifier(plugin, health, damage, groupSize, immuneToSunlight);
+		return entityModifier;
+	}
 	
 }

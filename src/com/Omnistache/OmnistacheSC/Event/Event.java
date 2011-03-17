@@ -1,5 +1,7 @@
 package com.Omnistache.OmnistacheSC.Event;
 
+import org.bukkit.util.config.Configuration;
+
 public interface Event {
 	
 	public boolean isOnCooldown();
@@ -10,4 +12,5 @@ public interface Event {
 	
 	public void dispose();
 	
+	public int initializeFromConfiguration(Configuration configuration);
 }

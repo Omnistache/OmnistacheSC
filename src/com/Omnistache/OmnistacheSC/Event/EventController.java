@@ -95,8 +95,7 @@ public class EventController implements Runnable {
 			validateEntityController(world);
 
 			/* Check the current event state of the world
-			 * None - make sure entityController is running the default phase settings and try
-			 * 		to start a new event
+			 * None/cooldown - make sure entityController is running the default phase settings
 			 * Event is running - do nothing, event takes care of itself
 			 */
 			
@@ -129,9 +128,17 @@ public class EventController implements Runnable {
 		
 		removeCompletedEvents(events);
 		
-		if()
+		if(events.isEmpty()){
+			return false;
+		}
 		
-		return false;
+		for(Event event : events){
+			if(!event.isOnCooldown()){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	private void removeCompletedEvents(ArrayList<Event> events) {
