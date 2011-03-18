@@ -1,5 +1,6 @@
 package com.Omnistache.OmnistacheSC.Spawn.Control;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -198,23 +199,38 @@ public enum MobSet {
 	}
 	
 	/**
-	 * note that this method returns null
-	 * if it selects a Giant because CreatureType does
-	 * not currently allow the spawning of Giants
-	 * sadly (cast MobSet to CreatureType instead and use that)
+	 * this method is hacky, injecting a new
+	 * name string into the creatureType so giants can spawn,
+	 * if this throws exceptions I've set it to return a Zombie
 	 * @return
 	 */
 	public CreatureType randomCreatureType(){
-		return CreatureType.fromName(randomCreatureTypeName());
+		String name = randomCreatureTypeName();
+		CreatureType creatureType = CreatureType.fromName(name);
+		if(creatureType == null){
+			Field nameField;
+			try {
+				nameField = CreatureType.class.getDeclaredField("name");
+				nameField.setAccessible(true);
+				nameField.set(creatureType, name);
+			} catch (SecurityException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return CreatureType.ZOMBIE;
+			} catch (NoSuchFieldException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				return CreatureType.ZOMBIE;
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return CreatureType.ZOMBIE;
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return CreatureType.ZOMBIE;
+			}
+		}
+		return creatureType;
 	}
-	
-	/**
-	 * this is for compatibility to cast to a CreatureType and used in
-	 * world.spawnCreature
-	 * @return
-	 */
-    public String getName() {
-        return randomCreatureTypeName();
-    }
-    
 }
