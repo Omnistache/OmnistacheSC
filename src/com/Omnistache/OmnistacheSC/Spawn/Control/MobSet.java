@@ -201,7 +201,9 @@ public enum MobSet {
 	/**
 	 * this method is hacky, injecting a new
 	 * name string into the creatureType so giants can spawn,
-	 * if this throws exceptions I've set it to return a Zombie
+	 * if this throws security exceptions it returns a zombie type
+	 * you can manually spawn creatures by linking into craftbukkit
+	 * if necessary...
 	 * @return
 	 */
 	public CreatureType randomCreatureType(){

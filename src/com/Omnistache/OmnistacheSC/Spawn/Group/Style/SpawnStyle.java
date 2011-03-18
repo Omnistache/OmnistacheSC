@@ -2,7 +2,7 @@ package com.Omnistache.OmnistacheSC.Spawn.Group.Style;
 
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
 /**
  * SpawnStyle interface, create ways to spawn enemies
@@ -21,5 +21,5 @@ public interface SpawnStyle {
 	 */
 	public LivingEntity spawnEntity(World world);
 	
-	public int initializeFromConfiguration(Configuration configuration);
+	public int initializeFromConfiguration(ConfigurationNode configuration);
 }

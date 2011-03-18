@@ -3,7 +3,6 @@ package com.Omnistache.OmnistacheSC.Spawn.Group.AI;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.bukkit.util.config.ConfigurationNode;
 
@@ -22,7 +21,7 @@ public class AIFactory {
 	 */
 	public static void register(String name, Class<? extends AI> aiClass){
 		aiMap.put(name, aiClass);
-		OmnistacheSC.logger.info("Registered new class " + aiClass.getSimpleName() + " with name " + name);
+		OmnistacheSC.logger.info("Successfully registered new class " + aiClass.getSimpleName() + " with name " + name);
 	}
 	
 	/**
@@ -31,11 +30,11 @@ public class AIFactory {
 	 */
 	public static void unregister(String name){
 		if(!aiMap.containsKey(name)){
-			OmnistacheSC.logger.info("AI type " + name + " is not registered and cannot be unregistered");
+			OmnistacheSC.logger.info("AI type " + name + " is not registered and cannot be unregistered in AIFactory");
 			return;
 		}
 		Class<? extends AI> aiClass = aiMap.remove(name);
-		OmnistacheSC.logger.info("Unregistered class " + aiClass.getSimpleName() + " with name " + name);
+		OmnistacheSC.logger.info("Successfully unregistered class " + aiClass.getSimpleName() + " with name " + name);
 	}
 	
 	/**

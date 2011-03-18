@@ -1,10 +1,8 @@
 package com.Omnistache.OmnistacheSC.Spawn.Group;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.World;
@@ -229,16 +227,16 @@ public class SpawnGroup implements Runnable {
 		
 		if(reinforceDelay < 20){
 			reinforceDelay = 20;
-			logger.info("reinforceDelay cannot be less than 20 (once per second), so it has been set to 20");
+			logger.info(name + "'s reinforceDelay cannot be less than 20 (once per second), so it has been set to 20");
 		}
 		
 		if(groupSize <= 0){
-			logger.info("Invalid groupSize: " + groupSize + ", setting to default (" + DEFAULT_GROUP_SIZE + ")");
+			logger.info(name + " has invalid groupSize: " + groupSize + ", setting to default (" + DEFAULT_GROUP_SIZE + ")");
 			groupSize = DEFAULT_GROUP_SIZE;
 		}
 		
 		if(groupSize > 100){
-			logger.info("Invalid groupSize: " + groupSize + ", too large, setting to max (" + MAX_GROUP_SIZE + ")");
+			logger.info(name + " has invalid groupSize: " + groupSize + ", too large, setting to max (" + MAX_GROUP_SIZE + ")");
 			groupSize = MAX_GROUP_SIZE;
 		}
 		

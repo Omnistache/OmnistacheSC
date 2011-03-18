@@ -121,6 +121,12 @@ public class EntityModifier extends EntityListener {
 		int health = configuration.getInt("health", -1);
 		boolean immuneToSunlight = configuration.getBoolean("immuneToSunlight", false);
 		
+		//default is unchanging, just return null
+		if(damage == -1 && health == -1 && immuneToSunlight == false){
+			OmnistacheSC.logger.info("EntityModifier configuration was default");
+			return null;
+		}
+		
 		EntityModifier entityModifier = new EntityModifier(plugin, health, damage, groupSize, immuneToSunlight);
 		return entityModifier;
 	}
